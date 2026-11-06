@@ -25,8 +25,26 @@ def escena_eleven(texto, ruta):
         if ch.strip() and not previo.strip(): t.append(ini)
         previo = ch
     return t
+
+_MODELO = None
+def escena_clonada(texto, ruta):
+    """Tu voz clonada GRATIS con Chatterbox Multilingual (MIT), en CPU. Necesita VOZ_REF = grabación tuya (wav)."""
+    global _MODELO
+    import torchaudio
+    from chatterbox.mtl_tts import ChatterboxMultilingualTTS
+    if _MODELO is None:
+        _MODELO = ChatterboxMultilingualTTS.from_pretrained(device="cpu")
+    wav = _MODELO.generate(texto, language_id="es", audio_prompt_path=os.environ["VOZ_REF"])
+    tmp = ruta + ".wav"; torchaudio.save(tmp, wav.cpu(), _MODELO.sr)
+    subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", tmp, "-codec:a", "libmp3lame", "-q:a", "2", ruta], check=True)
+    return []   # sin tiempos por palabra: main() los reparte según el largo de cada palabra
 VOCES = [VOZ, "es-MX-JorgeNeural", "es-CO-GonzaloNeural"]   # si una falla, prueba la siguiente
 async def escena(texto, ruta):
+    if os.environ.get("VOZ_REF") and os.path.exists(os.environ["VOZ_REF"]):
+        try:
+            t = escena_clonada(texto, ruta); print("voz usada: tu voz clonada (Chatterbox)", file=sys.stderr); return t
+        except Exception as ex:
+            print(f"Voz clonada falló, uso otra: {ex}", file=sys.stderr)
     if os.environ.get("ELEVENLABS_API_KEY"):
         try:
             t = escena_eleven(texto, ruta); print("voz usada: ElevenLabs", file=sys.stderr); return t
