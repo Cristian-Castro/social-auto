@@ -15,8 +15,8 @@ si no estás seguro de algo, usa un consejo atemporal y verificable.
 Responde SOLO con JSON válido con esta forma:
 {{"etiqueta": "{plan['pilar']}", "cta": "Síguenos · @freelanceccs",
  "caption": "texto del post con 3 a 5 hashtags",
- "escenas": [{{"titulo": "titular corto, resalta 1 palabra con <em>palabra</em>",
-              "texto": "frase hablada de máx. 14 palabras", "icono": "uno de: {ICONOS}"}}]}}
+ "escenas": [{{"titulo": "titular de máx. 6 palabras, resalta 1 con <em>palabra</em>",
+              "texto": "frase hablada de máx. 11 palabras", "icono": "uno de: {ICONOS}"}}]}}
 Usa entre 5 y 7 escenas: primera con gancho fuerte, última con llamado a seguirnos."""
 msg = anthropic.Anthropic().messages.create(model="claude-sonnet-5-5", max_tokens=1500,
                                             messages=[{"role": "user", "content": prompt}])
