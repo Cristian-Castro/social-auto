@@ -18,7 +18,7 @@ Responde SOLO con JSON válido con esta forma:
  "escenas": [{{"titulo": "titular corto, resalta 1 palabra con <em>palabra</em>",
               "texto": "frase hablada de máx. 14 palabras", "icono": "uno de: {ICONOS}"}}]}}
 Usa entre 5 y 7 escenas: primera con gancho fuerte, última con llamado a seguirnos."""
-msg = anthropic.Anthropic().messages.create(model="claude-sonnet-4-5", max_tokens=1500,
+msg = anthropic.Anthropic().messages.create(model="claude-sonnet-5-5", max_tokens=1500,
                                             messages=[{"role": "user", "content": prompt}])
 texto = msg.content[0].text
 print(json.dumps(json.loads(re.search(r"\{.*\}", texto, re.S).group(0)), ensure_ascii=False))
