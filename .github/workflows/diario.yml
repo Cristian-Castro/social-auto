@@ -1,0 +1,26 @@
+name: contenido-diario
+on:
+  schedule: [{cron: "0 12 * * *"}]   # 7:00 a.m. Colombia (UTC-5)
+  workflow_dispatch:
+jobs:
+  generar:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: {python-version: "3.12"}
+      - run: sudo apt-get update && sudo apt-get install -y ffmpeg fonts-inter && pip install playwright edge-tts pillow anthropic pyyaml && playwright install --with-deps chromium
+      - name: 1) Guion del día con Claude
+        run: python3 pipeline/generar_guion.py > guion.json
+        env: {ANTHROPIC_API_KEY: "${{ secrets.ANTHROPIC_API_KEY }}"}
+      - name: 2) Voz + video
+        run: python3 video/tts.py guion.json guion_t.json audio.mp3 && python3 video/render_reel.py guion_t.json reel.mp4 audio.mp3
+      - name: 3) Aprobación por Telegram
+        run: python3 pipeline/aprobar_telegram.py reel.mp4 "$(jq -r .caption guion.json)"
+        env: {TELEGRAM_TOKEN: "${{ secrets.TELEGRAM_TOKEN }}", TELEGRAM_CHAT_ID: "${{ secrets.TELEGRAM_CHAT_ID }}"}
+      - name: 4) Publicar en Instagram y Facebook
+        run: |
+          URL=$(python3 pipeline/subir_video.py reel.mp4)
+          python3 pipeline/publicar_meta.py "$URL" "$(jq -r .caption guion.json)"
+        env: {WP_URL: "${{ secrets.WP_URL }}", WP_USER: "${{ secrets.WP_USER }}", WP_APP_PASSWORD: "${{ secrets.WP_APP_PASSWORD }}", META_TOKEN: "${{ secrets.META_TOKEN }}", IG_USER_ID: "${{ secrets.IG_USER_ID }}", FB_PAGE_ID: "${{ secrets.FB_PAGE_ID }}"}
