@@ -10,13 +10,22 @@ VOZ = os.environ.get("VOZ", "en-US-AndrewMultilingualNeural")
 PAUSA = 0.45                  # segundos de aire entre escenas
 def dur(ruta):
     return float(subprocess.check_output(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", ruta]))
+VOCES = [VOZ, "es-MX-JorgeNeural", "es-CO-GonzaloNeural"]   # si una falla, prueba la siguiente
 async def escena(texto, ruta):
-    com = edge_tts.Communicate(texto, VOZ, rate="+0%", boundary="WordBoundary")
-    t, audio = [], b""
-    async for ch in com.stream():
-        if ch["type"] == "audio": audio += ch["data"]
-        elif ch["type"] == "WordBoundary": t.append(ch["offset"] / 1e7)
-    open(ruta, "wb").write(audio); return t
+    ultimo = None
+    for voz in dict.fromkeys(VOCES):
+        for kw in ({"boundary": "WordBoundary"}, {}):       # primero con tiempos por palabra, luego sin ellos
+            try:
+                com = edge_tts.Communicate(texto, voz, **kw)
+                t, audio = [], b""
+                async for ch in com.stream():
+                    if ch["type"] == "audio": audio += ch["data"]
+                    elif ch["type"] == "WordBoundary": t.append(ch["offset"] / 1e7)
+                if audio:
+                    open(ruta, "wb").write(audio); print(f"voz usada: {voz}", file=sys.stderr); return t
+            except Exception as ex:
+                ultimo = ex; print(f"voz {voz} {kw} falló: {ex}", file=sys.stderr)
+    raise RuntimeError(f"Ninguna voz funcionó: {ultimo}")
 async def main(entrada, salida, mp3):
     g = json.load(open(entrada, encoding="utf-8")); lista = []
     for i, e in enumerate(g["escenas"]):
