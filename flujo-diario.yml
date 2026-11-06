@@ -23,4 +23,4 @@ jobs:
         run: |
           URL=$(python3 pipeline/subir_video.py reel.mp4)
           python3 pipeline/publicar_meta.py "$URL" "$(jq -r .caption guion.json)"
-        env: {META_TOKEN: "${{ secrets.META_TOKEN }}", IG_USER_ID: "${{ secrets.IG_USER_ID }}", FB_PAGE_ID: "${{ secrets.FB_PAGE_ID }}"}
+        env: {WP_URL: "${{ secrets.WP_URL }}", WP_USER: "${{ secrets.WP_USER }}", WP_APP_PASSWORD: "${{ secrets.WP_APP_PASSWORD }}", META_TOKEN: "${{ secrets.META_TOKEN }}", IG_USER_ID: "${{ secrets.IG_USER_ID }}", FB_PAGE_ID: "${{ secrets.FB_PAGE_ID }}"}
