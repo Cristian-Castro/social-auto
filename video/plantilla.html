@@ -1,0 +1,77 @@
+<!doctype html><html><head><meta charset="utf-8"><style>
+:root{--bg:#F4F3EF;--ink:#111113;--gris:#86868B;--acc:#2F5BFF;--papel:#FBFAF7}
+*{box-sizing:border-box;margin:0}
+html,body{width:1080px;height:1920px;overflow:hidden;background:var(--bg);font-family:"Inter","Inter Display",sans-serif}
+#grid{position:absolute;inset:-80px;background-image:linear-gradient(#0001 2px,transparent 2px),linear-gradient(90deg,#0001 2px,transparent 2px);background-size:80px 80px}
+#vig{position:absolute;inset:0;background:radial-gradient(ellipse at center,#0000 55%,#0002 100%)}
+#top{position:absolute;top:96px;left:80px;font:600 30px "Inter";letter-spacing:.35em;color:var(--gris)}
+#brand{position:absolute;top:96px;right:80px;font:700 30px "Inter";color:var(--ink)}
+#bar{position:absolute;left:80px;right:80px;top:160px;height:6px;background:#0002;border-radius:3px}
+#bar i{display:block;height:100%;width:0;background:var(--ink);border-radius:3px}
+.esc{position:absolute;inset:0;opacity:0}
+.tit{position:absolute;left:80px;right:80px;top:300px;font:800 104px/1.04 "Inter Display";color:var(--ink);letter-spacing:-.03em}
+.tit em{font-style:normal;color:var(--acc)}
+.sub{position:absolute;left:80px;right:80px;top:300px;font:500 46px/1.3 "Inter";color:var(--gris)}
+.icon{position:absolute;left:50%;top:760px;width:420px;height:420px;margin-left:-210px}
+.cap{position:absolute;left:60px;right:60px;top:1330px;display:flex;flex-wrap:wrap;justify-content:center;gap:14px 16px}
+.w{font:800 78px/1.1 "Inter Display";color:#fff;background:var(--ink);padding:8px 26px 12px;border-radius:14px;opacity:0;transform:translateY(24px) rotate(var(--r));box-shadow:0 10px 0 #0003}
+.w.on{background:var(--acc)}
+#mascota{position:absolute;right:80px;bottom:150px;width:150px}
+#cta{position:absolute;left:0;right:0;bottom:70px;text-align:center;font:700 34px "Inter";color:var(--ink);letter-spacing:.02em}
+</style></head><body>
+<div id="grid"></div><div id="vig"></div>
+<div id="top"></div><div id="brand">CCCS</div><div id="bar"><i></i></div>
+<div id="stage"></div>
+<svg id="mascota" viewBox="0 0 100 110"><rect x="12" y="20" width="76" height="72" rx="18" fill="#FBFAF7" stroke="#111" stroke-width="5"/><line x1="50" y1="20" x2="50" y2="6" stroke="#111" stroke-width="5"/><circle cx="50" cy="6" r="6" fill="#2F5BFF"/><g id="ojos"><rect x="30" y="46" width="10" height="16" rx="5" fill="#111"/><rect x="60" y="46" width="10" height="16" rx="5" fill="#111"/></g><path d="M38 76 q12 8 24 0" stroke="#111" stroke-width="5" fill="none" stroke-linecap="round"/></svg>
+<div id="cta"></div>
+<script>
+const G=__GUION__;
+const ICONOS={
+robot:'<rect x="70" y="110" width="260" height="220" rx="50" fill="#FBFAF7" stroke="#111" stroke-width="12"/><line x1="200" y1="110" x2="200" y2="60" stroke="#111" stroke-width="12"/><circle cx="200" cy="52" r="20" fill="#2F5BFF"/><rect x="120" y="180" width="38" height="60" rx="18" fill="#111"/><rect x="242" y="180" width="38" height="60" rx="18" fill="#111"/><path d="M140 285 q60 36 120 0" stroke="#111" stroke-width="12" fill="none" stroke-linecap="round"/>',
+escudo:'<path d="M200 50 L340 105 V210 C340 290 280 345 200 375 C120 345 60 290 60 210 V105 Z" fill="#FBFAF7" stroke="#111" stroke-width="12" stroke-linejoin="round"/><path d="M135 215 l48 48 l90 -100" stroke="#2F5BFF" stroke-width="26" fill="none" stroke-linecap="round" stroke-linejoin="round"/>',
+codigo:'<rect x="40" y="90" width="320" height="230" rx="30" fill="#111"/><circle cx="85" cy="130" r="9" fill="#FBFAF7"/><circle cx="118" cy="130" r="9" fill="#86868B"/><path d="M130 220 l-45 40 l45 40" stroke="#2F5BFF" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-30)"/><path d="M270 220 l45 40 l-45 40" stroke="#FBFAF7" stroke-width="18" fill="none" stroke-linecap="round" stroke-linejoin="round" transform="translate(0,-30)"/><line x1="225" y1="200" x2="175" y2="300" stroke="#86868B" stroke-width="16" stroke-linecap="round"/>',
+rayo:'<path d="M225 40 L90 235 H190 L165 360 L310 160 H210 Z" fill="#2F5BFF" stroke="#111" stroke-width="12" stroke-linejoin="round"/>',
+paleta:'<path d="M200 50 C110 50 45 115 45 195 C45 285 120 350 215 350 C250 350 255 320 235 300 C215 280 235 255 265 255 H300 C335 255 355 235 355 200 C355 115 290 50 200 50Z" fill="#FBFAF7" stroke="#111" stroke-width="12"/><circle cx="125" cy="165" r="22" fill="#111"/><circle cx="195" cy="120" r="22" fill="#2F5BFF"/><circle cx="270" cy="150" r="22" fill="#86868B"/>',
+globo:'<circle cx="200" cy="200" r="150" fill="#FBFAF7" stroke="#111" stroke-width="12"/><ellipse cx="200" cy="200" rx="65" ry="150" fill="none" stroke="#111" stroke-width="10"/><line x1="50" y1="200" x2="350" y2="200" stroke="#111" stroke-width="10"/><path d="M80 120 H320 M80 280 H320" stroke="#2F5BFF" stroke-width="10"/>'};
+const ease=x=>1-Math.pow(1-Math.min(1,Math.max(0,x)),3);
+const pop=x=>{x=Math.min(1,Math.max(0,x));return 1+Math.sin(x*Math.PI)*.12*(1-x)+(-(Math.pow(1-x,3)))*.0}
+// tiempos
+let t0=0;const E=[];
+G.escenas.forEach((s,i)=>{
+  const pal=s.texto.split(/\s+/);let tt=0;const W=[];
+  if(s.tiempos){pal.forEach((p,k)=>W.push({p,t:s.tiempos[k]}));}
+  else pal.forEach(p=>{W.push({p,t:tt});tt+=.30+.035*p.length});
+  const dur=s.duracion||((s.tiempos?s.tiempos[s.tiempos.length-1]+.9:tt)+.7);
+  E.push({s,i,ini:t0,dur,W});t0+=dur;
+});
+const TOTAL=t0;
+document.getElementById('top').textContent=G.etiqueta.toUpperCase();
+document.getElementById('cta').textContent=G.cta||'';
+const st=document.getElementById('stage');
+E.forEach(e=>{
+  const d=document.createElement('div');d.className='esc';
+  const tit=document.createElement('div');tit.className='tit';tit.innerHTML=e.s.titulo||'';d.appendChild(tit);
+  const ic=document.createElement('svg');
+  d.insertAdjacentHTML('beforeend','<svg class="icon" viewBox="0 0 400 400">'+(ICONOS[e.s.icono]||ICONOS.robot)+'</svg>');
+  const cap=document.createElement('div');cap.className='cap';
+  e.W.forEach((w,k)=>{const s=document.createElement('span');s.className='w';s.textContent=w.p;s.style.setProperty('--r',((k*37%7)-3)*.6+'deg');cap.appendChild(s);w.el=s});
+  d.appendChild(cap);st.appendChild(d);e.el=d;e.tit=tit;e.icon=d.querySelector('.icon');
+});
+function render(t){
+  document.getElementById('grid').style.transform=`translate(${-(t*14)%80}px,${-(t*8)%80}px)`;
+  document.querySelector('#bar i').style.width=(100*t/TOTAL)+'%';
+  const blink=(t%3.2)>3.05;document.getElementById('ojos').style.transform=blink?'scaleY(.1)':'';document.getElementById('ojos').style.transformOrigin='50px 54px';
+  document.getElementById('mascota').style.transform=`translateY(${Math.sin(t*3)*8}px) rotate(${Math.sin(t*2)*3}deg)`;
+  E.forEach(e=>{
+    const l=t-e.ini;const vis=l>=-.01&&l<e.dur+.01;e.el.style.opacity=vis?1:0;if(!vis)return;
+    const a=ease(l/.45),o=ease((e.dur-l)/.3);
+    e.el.style.opacity=Math.min(a,o);
+    e.tit.style.transform=`translateY(${(1-a)*60}px)`;
+    e.icon.style.transform=`scale(${.4+.6*ease(l/.5)}) rotate(${(1-ease(l/.6))*-14}deg) translateY(${Math.sin(t*2.2)*10}px)`;
+    e.W.forEach((w,k)=>{const lw=l-w.t;const x=ease(lw/.18);
+      w.el.style.opacity=lw>=0?1:0;w.el.style.transform=`translateY(${(1-x)*24}px) rotate(var(--r)) scale(${1+.0})`;
+      const actual=lw>=0&&(k==e.W.length-1||l<e.W[k+1].t);w.el.classList.toggle('on',actual)});
+  });
+}
+window.TOTAL=TOTAL;window.render=render;render(0);
+</script></body></html>

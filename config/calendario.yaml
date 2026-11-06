@@ -1,0 +1,8 @@
+# Malla semanal: cada día un pilar. El generador elige el tema del día según este calendario.
+lunes:     {pilar: "Tips de IA",            formato: reel,      objetivo: "Prompt o truco práctico"}
+martes:    {pilar: "Diseño gráfico",        formato: carrusel,  objetivo: "Error común / antes y después"}
+miercoles: {pilar: "Noticias de tecnología", formato: reel,     objetivo: "Noticia explicada en 20 s (del blog)"}
+jueves:    {pilar: "Automatizaciones con IA", formato: reel,    objetivo: "Flujo que ahorra tiempo"}
+viernes:   {pilar: "Páginas web / WordPress", formato: carrusel, objetivo: "Tip de Divi, velocidad o SEO"}
+sabado:    {pilar: "Ciberseguridad",        formato: reel,      objetivo: "Alerta o hábito de seguridad"}
+domingo:   {pilar: "Recomendación de herramienta IA", formato: historia, objetivo: "Herramienta + enlace al blog"}
